@@ -1,0 +1,175 @@
+# LABORATOR
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+
+class Student
+{
+private:
+    const int ID_Matricol;
+    int varsta;
+    char* nume;
+    int nrNote;
+    int* note;
+
+public:
+    static int anCurent; // e acelasi pentru toate instantele de tip clasa
+                         // trebuie initializat
+
+    static void mesaj()   //in functii statice nu folosim decat variabile statice
+    {
+        cout<<"Bine ati venit studenti de anul "<<anCurent;
+    }
+
+    //constructor (3 tipuri: fara parametrii, parametrizati si copy constructor)
+    Student(): ID_Matricol(00000)
+    {
+        this->varsta = 0;
+        this->nume = new char[strlen("Anonim")+1];
+        strcpy(this->nume,"Anonim");
+    }
+
+    Student(int id, int varsta, char* nume, int nrNote, int* note): ID_Matricol(id)
+    {
+        this->varsta = varsta;
+
+        this->nume = new char[strlen(nume)+1];
+        strcpy(this->nume, nume);
+
+        this->nrNote = nrNote; //this se refera la atributele din clasa
+
+        this->note = new int(nrNote);
+
+        for(int i = 0; i<nrNote; i++)
+        {
+            this->note[i] = note[i];
+        }
+    }
+
+    Student(int varsta): ID_Matricol(00)
+    {
+        this-> varsta = varsta;
+    }
+
+    void Afisare()
+    {
+        cout<<"Student "<<this->nume<<" are urmatoarele note:";
+        for(int i=0; i<this->nrNote; i++)
+            cout<<this->note[i]<<" ";
+    }
+
+    char* getNume()
+    {
+        return this->nume;
+    }
+
+    int* getNote()
+    {
+        return this->note;
+    }
+
+    int getNrNote()
+    {
+        return this->nrNote;
+    }
+
+    void setVarsta(int varsta)
+    {
+        this->varsta= varsta;
+    }
+
+    int getVarsta()
+    {
+        return varsta;
+    }
+
+    void setNume(char* nume)
+    {
+        if(this->nume != nullptr)
+            delete[] this->nume;
+
+        this->nume = new char[strlen(nume)+1];
+        strcpy(this->nume, nume);
+    }
+
+    void setNote(int* note, int nrNote)
+    {
+        if(this->note != nullptr)
+            delete[] this->note;
+
+        this-> nrNote = nrNote;
+        this->note = new int[nrNote];
+
+        for(int i = 0; i< nrNote; i++)
+            this->note[i] = note[i];
+    }
+
+    float medieStudent()
+    {
+        float medie_note;
+        for(int i = 0; i< this->nrNote; i++)
+            medie_note = medie_note + this->note[i];
+
+        medie_note = medie_note/this->nrNote;
+        return medie_note;
+    }
+
+    ~Student()
+    {
+        if(this->note != nullptr) //la adresa lui note exista ceva
+            delete[] this->note;
+
+        if(this->nume != nullptr)
+            delete[] this->nume;
+    }
+};
+
+int Student::anCurent = 2;
+
+int main()
+{
+    Student s;
+
+    char nume[] = {"POO"};
+    char nume2[] = {"POO2"};
+    int note[]= {5,6,7,8};
+    int note2[] = {5,6,7,8,10};
+
+    Student s2(101, 3, nume, 4, note);
+    s2.Afisare();
+
+    Student s3(10);
+
+    cout<<s2.getNume()<<endl;
+
+    s2.setNume(nume2);
+    cout<<s2.getNume()<<endl;
+
+    int* notele = s2.getNote();
+    for(int i=0; i<s2.getNrNote(); i++)
+        cout<<*(notele+i)<<" ";
+
+    cout<<s2.getVarsta()<<endl;
+    s2.setVarsta(24);
+    cout<<s2.getVarsta()<<endl;
+    cout<<"---------------------------------\n";
+    int* notele2 = s2.getNote();
+    for(int i=0; i<s2.getNrNote(); i++)
+        cout<<*(notele2+i)<<" ";
+
+    cout<<endl;
+
+    s2.setNote(note2, 5);
+
+    int* notele3 = s2.getNote();
+    for(int i=0; i<s2.getNrNote(); i++)
+        cout<<*(notele3+i)<<" ";
+
+    cout<<"---------------\n";
+
+    cout<<s2.medieStudent();
+
+
+    return 0;
+}

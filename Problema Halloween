@@ -1,0 +1,239 @@
+#include <iostream>
+#include <string.h>
+#include <list>
+
+using namespace std;
+
+class Decoratiune
+{
+    char* denumire;
+    string culoare;
+    float pret;
+    bool reciclabil;
+
+public:
+    Decoratiune()
+    {
+        this->denumire = new char[strlen("Necunoscut") + 1];
+        strcpy(this->denumire, "Necunoscut");
+
+        this->culoare = "Non-culoare";
+
+        this->pret = 0;
+        this->reciclabil = false;
+    }
+
+    Decoratiune(char* denumire, string culoare, float pret, bool reciclabil)
+    {
+        this->denumire = new char[strlen(denumire) + 1];
+        strcpy(this->denumire, denumire);
+
+        this->culoare = culoare;
+        this->pret = pret;
+        this->reciclabil = reciclabil;
+    }
+
+    void Citire_decoratiune()
+    {
+        char denumire[50];
+        cin.ignore(50, '\n');
+        cout<<"\nIntroduceti denumirea decoratiunii:";
+        cin.get(denumire, 50);
+        this->denumire = new char[strlen(denumire) + 1];
+        strcpy(this->denumire, denumire);
+        cin.ignore(50, '\n');
+
+        cout<<"\nIntroduceti culoarea decoratiunii:";
+        cin>>this->culoare;
+
+        cout<<"\nIntroduceti pretul decoratiunii:";
+        cin>>this->pret;
+
+        cout<<"\nIntroduceti 1 daca decoratiunea este reciclabila si 0 daca nu este:";
+        cin>>this->reciclabil;
+    }
+
+    Decoratiune(const Decoratiune &decoratiune_precedenta)
+    {
+        this->denumire = new char[strlen(decoratiune_precedenta.denumire)  + 1];
+        strcpy(this->denumire, decoratiune_precedenta.denumire);
+
+        this->culoare = decoratiune_precedenta.culoare;
+
+        this->pret = decoratiune_precedenta.pret;
+
+        this->reciclabil = decoratiune_precedenta.reciclabil;
+    }
+
+    Decoratiune operator=(const Decoratiune & decoratiune_veche)
+    {
+        if(this != &decoratiune_veche)
+        {
+            this->denumire = decoratiune_veche.denumire;
+            this->culoare = decoratiune_veche.culoare;
+            this->pret = decoratiune_veche.pret;
+            this->reciclabil = decoratiune_veche.reciclabil;
+        }
+        return *this;
+    }
+
+    void Get_Info() const
+    {
+        cout<<"Denumirea decoratiunii este: "<<this->denumire<<", iar culoarea acesteia este "<<this->culoare<<"."<<endl;
+        cout<<"Decoratiunea costa "<<this->pret<<" lei."<<endl;
+
+        if(this->reciclabil != 0)
+            cout<<"Decoratiunea este reciclabila.";
+        else
+            cout<<"Decoratiunea nu este reciclabila.";
+
+        cout<<endl;
+    }
+
+    bool operator==(const Decoratiune& decoratiune)
+    {
+        for(int i = 0; i<strlen(this->denumire); i++)
+        {
+            if(this->denumire[i] != decoratiune.denumire[i])
+                return false;
+        }
+        return true;
+    }
+
+    friend ostream& operator<<(ostream& out, const Decoratiune dec)
+    {
+        out<<"Denumirea decoratiunii este: "<<dec.denumire<<", iar culoarea acesteia este "<<dec.culoare<<"."<<endl;
+        out<<"Decoratiunea costa "<<dec.pret<<" lei."<<endl;
+
+        if(dec.reciclabil != 0)
+            cout<<"Decoratiunea este reciclabila.";
+        else
+            cout<<"Decoratiunea nu este reciclabila.";
+
+        cout<<endl;
+    }
+
+    float operator+ (Decoratiune d)
+    {
+        float total;
+        total = this->pret + d.pret;
+
+        return total;
+    }
+
+    ~Decoratiune()
+    {
+        if(this->denumire != NULL)
+            delete[] this->denumire;
+    };
+
+
+};
+
+
+void Adauga_decoratiune(list<Decoratiune>& lista_de_decoratiuni, Decoratiune &decoratiune_de_adaugat)
+{
+    lista_de_decoratiuni.push_back(decoratiune_de_adaugat);
+}
+
+void Afisare_decoratiuni(list<Decoratiune>& lista_de_decoratiuni)
+{
+    int j = 1;
+    for(auto const& i: lista_de_decoratiuni)
+    {
+        cout<<"Decoratiunea "<<j<<" este: ";
+        i.Get_Info();
+        j++;
+        cout<<endl;
+    }
+    cout<<"Lista contine:"<<lista_de_decoratiuni.size()<<" decoratiuni."<<endl;
+}
+
+void Stergere_decoratiune(list<Decoratiune>& lista_de_decoratiuni, Decoratiune& decoratiune_de_sters)
+{
+    lista_de_decoratiuni.remove(decoratiune_de_sters);
+}
+
+void Afisare()
+{
+    cout<<"------------------------------------Organizare Decoratiuni------------------------------------------------"<<endl;
+    cout<<"0 - Pentru a reveni la meniul principal"<<endl;
+    cout<<"1 - Pentru a introduce decoratiuni in lista"<<endl;
+    cout<<"2 - Pentru a afisa lista de decoratiuni"<<endl;
+    cout<<"3 - Pentru a sterge decoratiuni din lista"<<endl;
+    cout<<"4 - Pentru a afisa pretul total"<<endl;
+    cout<<"5 - Pentru a opri programul"<<endl;
+}
+
+int main()
+{
+
+    Decoratiune d("Glob", "rosu", 10, 1);
+    cout<<d<<"\n";
+
+    Decoratiune d1("Artifici", "albastru", 15, 0);
+    cout<<d1<<endl;
+    cout<<"Pretul total:"<<(d + d1)<<endl;
+
+    Afisare();
+    int optiune;
+    list<Decoratiune> lista_decoratiuni;
+
+    Adauga_decoratiune(lista_decoratiuni, d);
+    Adauga_decoratiune(lista_decoratiuni, d1);
+
+    while(optiune != 5)
+    {
+        cin>>optiune;
+
+        while(cin.fail() || optiune >= 6)
+        {
+            cout<<"Comanda inexistenta!"<<endl;
+            cout<<"Introduceti alta comanda:"<<endl;
+            cin.clear();
+            cin.ignore(1000,'\n');
+            cin >> optiune;
+        }
+
+        if(optiune == 0)
+            Afisare();
+
+
+        if(optiune == 1)
+        {
+            Decoratiune decoratiune_adaugata;
+            decoratiune_adaugata.Citire_decoratiune();
+            Adauga_decoratiune(lista_decoratiuni, decoratiune_adaugata);
+            cout<<"\nDecoratiunea dumneavoastra a fost adaugata"<<endl;
+            cout<<"Apasati 0 pentru a reveni la meniul principal sau continuati cu o alta comanda"<<endl;
+        }
+
+        if(optiune == 2)
+        {
+            if(lista_decoratiuni.size() == 0)
+            {
+                cout<<"\n Lista dumneavosatra este goala."<<endl;
+                cout<<"Apasati 0 pentru a reveni la meniul principal sau continuati cu o alta comanda"<<endl;
+            }
+            else
+            {
+                cout<<"\nLista de decoratiuni este:"<<endl;
+                Afisare_decoratiuni(lista_decoratiuni);
+                cout<<"Apasati 0 pentru a reveni la meniul principal sau continuati cu o alta comanda"<<endl;
+            }
+        }
+        if(optiune == 3)
+        {
+            cout<<"\nIntroduceti decoratiunea pe care doriti sa o stergeti"<<endl;
+            Decoratiune decoratiune_sters;
+            decoratiune_sters.Citire_decoratiune();
+            cin.ignore(10, '\n');
+            Stergere_decoratiune(lista_decoratiuni, decoratiune_sters);
+
+            cout<<"\nDecoratiunea a fost stearsa din lista."<<endl;
+            cout<<"Apasati 0 pentru a reveni la meniul principal sau continuati cu o alta comanda"<<endl;
+        }
+    }
+    
+  return 0;
+}

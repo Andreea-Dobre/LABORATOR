@@ -924,7 +924,7 @@ class Meniu //clasa construita ca sa imi fie mai usor cu meniul si ca sa nu umpl
 public:
     Meniu()
     {
-        system("Color 2E"); //schimba culoarea consolei (numarul = background, litera = textul) merge dor in windows
+        //system("Color 2E"); //schimba culoarea consolei (numarul = background, litera = textul) merge dor in windows
         cout<<"______________________________________________BOOK LOG_____________________________________________"<<endl;
         cout<<" "<<endl;
         cout<<"Puteti accesa urmatoarele comenzi:"<<endl;

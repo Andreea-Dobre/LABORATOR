@@ -1,5 +1,5 @@
-###### Dobre Andreea-Madalina
-####### Grupa 212
+##### Dobre Andreea-Madalina
+###### Grupa 212
 
 ### Despre Aplicatie:
 Este o aplicatie de gestionare a unei biblioteci. In stadiul actual aplicatia are comenzi de adaugare carti in lista, stergere carti si afisare lista, 

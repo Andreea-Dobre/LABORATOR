@@ -1,0 +1,198 @@
+#include <iostream>
+#include <string.h>
+using namespace std;
+class Persoana
+{
+private:
+    string nume;
+    char* prenume;
+    int varsta;
+
+public:
+    Persoana()
+    {
+        this->nume="Anonim";
+        this->prenume=new char[strlen("Anonim") + 1];
+        strcpy(this->prenume,"Anonim");
+        this->varsta=0;
+    }
+
+    Persoana(string nume, char* prenume, int varsta)
+    {
+        this->nume=nume;
+        this->prenume=new char[strlen(prenume) + 1];
+        strcpy(this->prenume, prenume);
+        this->varsta=varsta;
+    }
+
+    Persoana(const Persoana& p)
+    {
+        this->nume = p.nume;
+        this->varsta = p.varsta;
+
+        this->prenume = new char[strlen(p.prenume) + 1];
+        strcpy(this->prenume, p.prenume);
+    }
+
+    Persoana& operator=(const Persoana& p)
+    {
+        if(this != &p)
+        {
+            this->nume = p.nume;
+
+            if(this->prenume != NULL)
+                delete[] this->prenume;
+
+            this->prenume = new char[strlen(p.prenume)+1];
+            strcpy(this->prenume, p.prenume);
+            this->varsta = p.varsta;
+        }
+        return *this;
+    }
+
+    friend ostream& operator<<(ostream& out, const Persoana& p)
+    {
+        out<<p.nume<<" "<<p.prenume<<" "<<p.varsta;
+        return out;
+    }
+
+    friend istream& operator>>(istream& in, Persoana& p)
+    {
+        cout<<"\nNumele este: ";
+        in>>p.nume;
+        cout<<"\nPrenumele este: ";
+        char buffer[100];
+        in>>buffer;
+
+        if(p.prenume!=NULL)
+            delete[] p.prenume;
+        p.prenume=new char[strlen(buffer)+1];
+        strcpy(p.prenume, buffer);
+
+        cout<<"\nVarsta este ";
+        in>>p.varsta;
+
+        return in;
+    }
+
+    void Calculeaza(int a, int b)
+    {
+            cout<<"\n"<<a+b;
+    }
+
+    void Afisare()
+    {
+        cout<<this->nume<<" "<<this->prenume<<" "<<this->varsta;
+    }
+
+    ~Persoana()
+    {
+        if(this-> prenume != NULL)
+            delete[] this->prenume;
+    };
+
+};
+
+class Student:public Persoana
+{
+private:
+    string facultate;
+
+public:
+    Student():Persoana() ///MOSTENESTE CONSTRUCTORUL FARA PARAMETRII DE LA PERSOANA
+    {
+        this->facultate = " Anonima";
+    }
+
+    Student(string nume, char* prenume, int varsta, string facultate):Persoana(nume, prenume,varsta) ///CONSTRUCTOR CU PARAMETRII (IA CONSTRUCTORUL CU PARAMETRII DE LA PERSOANA)
+    {
+        this->facultate = facultate;
+    }
+
+    Student(Persoana p, string facultate):Persoana(p) ///CONSTRUCTOR CU PARAMETRII (SE APELEAZA COPY CONSTRUCTORUL DE LAA PERSOANA)
+    {
+        this->facultate = facultate;
+    }
+
+    Student& operator=(const Student& s)
+    {
+        if(this!=&s)
+        {
+            Persoana::operator = (s);   ///CASTARE PENTRU S (SE FOLOSESTE OPERATORUL "=" DE LE PERSOANA)
+            this->facultate = s.facultate;
+
+        }
+        return *this;
+    }
+
+    Student(const Student& s):Persoana(s)
+    {
+        this->facultate = s.facultate;
+    }
+
+    void Calculeaza(string a) ///SUPRAINCARCARE pentru functia CALCULEAZA care exista si in clasa persoana
+    {
+        cout<<"\n"<< a;
+    }
+
+    void Calculeaza(int a, int b) ///SUPRASCRIERE (are acelasi antet cu functia din clasa persoana, dar stie pe care sa o apeleze in functie de obiectul care o apeleaza)
+    {
+        cout<<"\n"<<a-b;
+    }
+
+
+    friend ostream& operator<<(ostream& out, const Student& s)
+    {
+        out<<(Persoana&)s;
+        out<<" "<<s.facultate;
+        return out;
+    }
+
+    friend istream& operator>>(istream& in, Student& s)
+    {
+        in>>(Persoana&)s;
+        cout<<"\nIntroduceti facultatea: ";
+        in>>s.facultate;
+        return in;
+    }
+
+    /*void Afisare()
+    {
+        Persoana::Afisare();
+        cout<<this->facultate;
+    }*/
+
+
+
+};
+
+int main()
+{
+    char prenume[] = {"Edi"};
+
+    Persoana p1;
+    Persoana p2(p1), p3;
+    p3 = p1;
+    Persoana p4("Szmeteanca", prenume, 23);
+    p1.Afisare();
+    cout<<"\n";
+        p2.Afisare();
+    cout<<"\n";
+        p3.Afisare();
+    cout<<"\n";
+        p4.Afisare();
+    cout<<"\n";
+
+    Student s1;
+    s1.Afisare();
+
+    //p1.Calculeaza(2, 3);
+   // s.Calculeaza("ANA");
+   cout<<endl;
+   cout<<s1;
+   Student s2;
+   cin>>s2;
+
+
+    return 0;
+}

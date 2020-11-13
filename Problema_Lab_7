@@ -1,0 +1,223 @@
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+
+class Persoana
+{
+    string nume;
+    string CNP;
+    float inaltime;
+
+public:
+
+    Persoana()
+    {
+        this->nume = "Anonim";
+        this->CNP = "0000000000000";
+        this->inaltime = 0;
+    }
+
+    Persoana(string nume, string CNP, float inaltime)
+    {
+        this->nume = nume;
+        this->CNP = CNP;
+        this->inaltime = inaltime;
+    }
+
+    Persoana(const Persoana& p)
+    {
+        this->nume = p.nume;
+        this->CNP = p.CNP;
+        this->inaltime = p.inaltime;
+    }
+
+    Persoana& operator=(const Persoana& p)
+    {
+        if(this != &p)
+        {
+            this->nume = p.nume;
+            this->CNP = p.CNP;
+            this->inaltime = p.inaltime;
+        }
+        return *this;
+    }
+
+    friend istream& operator>>(istream& in, Persoana p)
+    {
+        cout<<"\nIntroduceti numele:";
+        in>>p.nume;
+        cout<<"\nIntroduceti CNP-ul";
+        in>>p.CNP;
+        cout<<"\nIntroduceti inaltimea";
+        in>>p.inaltime;
+    }
+
+    friend ostream& operator<<(ostream& out, const Persoana& p)
+    {
+        out<<p.nume<<" are CNP-ul "<<p.CNP<<" si inaltimea "<<p.inaltime;
+    }
+
+    bool operator<(const Persoana& p)
+    {
+        if(this->inaltime < p.inaltime)
+            return true;
+        else
+            return false;
+    }
+
+    ~Persoana()
+    {
+
+    };
+};
+
+class Student: public Persoana
+{
+    string facultate;
+    bool buget;
+    int nr_note;
+    int* note;
+
+public:
+
+    Student():Persoana()
+    {
+        this->facultate = " Anonima";
+        this->buget = 0;
+        this->nr_note = 0;
+        this->note = new int[1];
+        note[0] = 0;
+    }
+
+    Student(Persoana p, string facultate, bool buget, int nr_note, int* note):Persoana(p)
+    {
+        this->facultate = facultate;
+        this->buget = buget;
+        this->nr_note = nr_note;
+        this->note = new int[nr_note];
+        for(int i = 0; i < this->nr_note; i++)
+        {
+            this->note[i] = note[i];
+        }
+    }
+
+    Student& operator=(const Student& s)
+    {
+        if(this != &s)
+        {
+            Persoana::operator = (s);
+            this->facultate = s.facultate;
+            this->buget = s.buget;
+            this->nr_note = s.nr_note;
+            this->note = new int[s.nr_note];
+            for(int i = 0; i < s.nr_note; i++)
+            {
+                this->note[i] = s.note[i];
+            }
+        }
+        return *this;
+    }
+
+    Student(const Student& s):Persoana(s)
+    {
+        this->facultate = s.facultate;
+        this->buget = s.buget;
+        this->nr_note = s.nr_note;
+        this->note = new int[s.nr_note];
+        for(int i = 0; i < s.nr_note; i++)
+        {
+            this->note[i] = s.note[i];
+        }
+
+    }
+
+    friend istream& operator>>(istream& in, Student& s)
+    {
+        in>>(Persoana&)s;
+        cout<<"\nIntroduceti facultatea:";
+        in>>s.facultate;
+        cout<<"\nIntroduceti 1 daca studentul este la buget sau 0 daca nu este:";
+        in>>s.buget;
+        cout<<"\nIntroduceti numarul de note";
+        in>>s.nr_note;
+        cout<<"\nIntroduceti notele:";
+        s.note = new int[s.nr_note];
+        for(int i = 0; i < s.nr_note; i++)
+            in>>s.note[i];
+    }
+
+    friend ostream& operator<<(ostream& out, Student s)
+    {
+        out<<(Persoana&)s;
+        out<<"\nStudentul este la facultatea: "<<s.facultate;
+
+        if(s.buget == 1)
+            out<<"\nStudentul este la buget.";
+        else
+            out<<"\nStudentul nu este la buget.";
+
+        out<<"\nStudentul are "<<s.nr_note<<" note";
+        out<<"\nNotele sunt:";
+
+        for(int i =0; i < s.nr_note; i++)
+            out<<s.note[i]<<", ";
+
+        out<<endl;
+    }
+
+    float Media()
+    {
+        float medie;
+        for(int i = 0; i < this->nr_note; i++)
+        {
+            medie = medie + this->note[i];
+
+        }
+        medie = medie/this->nr_note;
+        return medie;
+    }
+
+    bool operator<(Student& s)
+    {
+        if(s.Media() < Media())
+            return true;
+        else
+            return false;
+    }
+
+    ~Student()
+    {
+        if(this->note != NULL)
+            delete[] this->note;
+    }
+};
+
+int main()
+{
+    Persoana p("Ana", "4567638457789", 1.5);
+    cout<<p<<"\n";
+    Persoana p1;
+    cout<<p1<<"\n";
+    p1 = p;
+    cout<<p1<<"\n";
+
+    int note1[] = {5, 6};
+    Student s(p, "ceva", 1, 2, note1);
+    cout<<"\n"<<s<<"\n";
+    cout<<"\nMedia studentului s este: "<<s.Media();
+    cout<<"\n";
+
+    int note2[] = {4, 7, 6, 8};
+    Student s1(p, "altceva", 0, 4, note2);
+    cout<<"\n"<<s1<<"\n";
+    cout<<"\nMedia studentului s1 este: "<<s1.Media();
+
+    cout<<"\n";
+    if(s < s1)
+        cout<<"\nStudentul s are media mai mica ca s1.";
+    else
+        cout<<"\nStudentul s1 are media mai mica ca s.";
+
+    return 0;
+}

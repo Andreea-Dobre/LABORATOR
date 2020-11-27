@@ -1,0 +1,204 @@
+#include <iostream>
+#include <list>
+
+using namespace std;
+
+class Produs
+{
+protected:
+    string nume;
+    float pretBrut;
+
+public:
+
+    Produs()
+    {
+        this->nume = "Necunoscut";
+        this->pretBrut = 0;
+    }
+
+    Produs(const Produs& p)
+    {
+        this->nume = p.nume;
+        this->pretBrut = p.pretBrut;
+    }
+
+    Produs& operator=(const Produs& p)
+    {
+        if(this != &p)
+        {
+            this->nume = p.nume;
+            this->pretBrut = p.pretBrut;
+        }
+
+        return *this;
+    }
+
+    void afisareBrand()
+    {
+        cout<<"Acest produs apartine EDI>.RL";
+    }
+
+    virtual float calculeazaPret()
+    {
+        return pretBrut;
+    }
+
+    friend ostream& operator<<(ostream& out,const Produs& p)
+    {
+        out<<p.nume;
+        return out;
+    }
+
+    friend istream& operator >>(istream& in, Produs&p)
+    {
+        cout<<"Numele este: ";
+        in>>p.nume;
+        cout<<"Pretul brut este: ";
+        in>>p.pretBrut;
+        return in;
+    }
+
+};
+
+class ProdusPerisabil:public Produs
+{
+    string dataExpirare;
+
+public:
+
+    ProdusPerisabil():Produs()
+    {
+        this->dataExpirare = "00-00-0000";
+    }
+
+    ProdusPerisabil(const ProdusPerisabil& pp):Produs(pp)
+    {
+            this->dataExpirare = pp.dataExpirare;
+    }
+
+    ProdusPerisabil& operator=(const ProdusPerisabil& pp)
+    {
+        if(this != &pp)
+        {
+            Produs::operator = (pp);
+            this->dataExpirare = pp.dataExpirare;
+        }
+    }
+
+    float calculeazaPret()
+    {
+        return pretBrut+(40*pretBrut)/100;
+    }
+
+    friend ostream& operator<<(ostream& out,const ProdusPerisabil& p)
+    {
+        out<<(Produs&)p;
+        out<<" "<<p.dataExpirare;
+        return out;
+    }
+
+    friend istream& operator >>(istream& in, ProdusPerisabil&p)
+    {
+        in>>(Produs&)p;
+        cout<<"Dati data: ";
+        in>>p.dataExpirare;
+        return in;
+    }
+
+};
+
+class ProdusNeperisabil:public Produs
+{
+    int garantie;
+
+public:
+
+    ProdusNeperisabil():Produs()
+    {
+        this->garantie = 0;
+    }
+
+    ProdusNeperisabil(const ProdusNeperisabil& pn): Produs(pn)
+    {
+            this->garantie = pn.garantie;
+    }
+
+    ProdusNeperisabil& operator=(const ProdusNeperisabil& pn)
+    {
+        if(this != &pn)
+        {
+            Produs::operator = (pn);
+            this->garantie = pn.garantie;
+        }
+    }
+
+    float calculeazaPret()
+    {
+        return pretBrut+(10*pretBrut)/100;
+    }
+
+    friend ostream& operator<<(ostream& out,const ProdusNeperisabil& p)
+    {
+        out<<(Produs&)p;
+        out<<" "<<p.garantie;
+        return out;
+    }
+
+    friend istream& operator >>(istream& in, ProdusNeperisabil&p)
+    {
+        in>>(Produs&)p;
+        cout<<"ani garantie: ";
+        in>>p.garantie;
+        return in;
+    }
+
+};
+
+class ListaProduse
+{
+    Produs* p[100];
+    int index = 0;
+
+public:
+
+    void AddPP(ProdusPerisabil& pp)
+    {
+        p[index] = &pp;
+        index++;
+    }
+
+    void AddPN(ProdusNeperisabil& pn)
+    {
+        p[index] = &pn;
+        index++;
+    }
+
+    void rmv(int index)
+    {
+        p[index] = NULL;
+    }
+
+
+};
+
+int main()
+{
+    Produs *p[2];
+
+    ProdusNeperisabil pn;
+    ProdusPerisabil pp;
+
+    p[0] = new ProdusPerisabil();
+    p[0] = &pp;
+
+    p[1] = new ProdusNeperisabil();
+    p[1] = &pn;
+
+    cin>>pn>>pp;
+
+    cout<<p[0]->calculeazaPret()<<" "<<p[1]->calculeazaPret();
+
+
+    return 0;
+}

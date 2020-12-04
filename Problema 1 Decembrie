@@ -1,0 +1,257 @@
+#include <iostream>
+
+using namespace std;
+
+class Masina
+{
+    string marca;
+    string model;
+    string utilizare;
+
+public:
+
+    Masina()
+    {
+        this->marca = "Necunoscut";
+        this->model = "Necunoscut";
+        this->utilizare = "Necunoscut";
+    }
+
+    Masina(string model, string marca, string utilizare)
+    {
+        this->model = model;
+        this->marca = marca;
+        this->utilizare = utilizare;
+    }
+
+    Masina& operator=(const Masina& m)
+    {
+        if(this != &m)
+        {
+            this->marca = m.marca;
+            this->model = m.model;
+            this->utilizare = m.utilizare;
+        }
+        return *this;
+    }
+
+    virtual void Getter_Info()
+    {
+        cout<<"Modelul masinii este: "<<this->model<<", iar marca: "<<this->marca<<". Masina este utilizata pentru: "<<this->utilizare<<endl;
+    }
+
+    ~Masina()
+    {
+
+    };
+
+};
+
+class MasiniUndercover: public Masina
+{
+    int viteza;
+    int rezistenta;
+
+public:
+
+    MasiniUndercover(): Masina()
+    {
+        this->viteza = 0;
+        this->rezistenta =0;
+    }
+
+    MasiniUndercover(string model, string marca, string utilizare, int viteza, int rezistenta): Masina(model, marca, utilizare)
+    {
+        this->viteza = viteza;
+        this->rezistenta = rezistenta;
+    }
+
+    MasiniUndercover& operator=(const MasiniUndercover& mu)
+    {
+        if(this != &mu)
+        {
+            Masina::operator=(mu);
+            this->viteza = mu.viteza;
+            this->rezistenta = mu.rezistenta;
+        }
+
+        return *this;
+    }
+
+    void Getter_Info()
+    {
+        Masina::Getter_Info();
+
+        cout<<"Viteza maxima a masinii este: "<<this->viteza<<"."<<" Maisna va rezista la "<<this->rezistenta<<" gloante.";
+    }
+
+    ~MasiniUndercover()
+    {
+
+    };
+
+};
+
+class MasiniInterventie: public Masina
+{
+    int nr_persoane;
+    bool arma;
+
+public:
+
+    MasiniInterventie(): Masina()
+    {
+        this->nr_persoane = 0;
+        this->arma = 0;
+    }
+
+    MasiniInterventie(string model, string marca, string utilizare, int nr_persoane, bool arma): Masina(model, marca, utilizare)
+    {
+        this->nr_persoane = nr_persoane;
+        this->arma = arma;
+    }
+
+    MasiniInterventie& operator=(const MasiniInterventie& mi)
+    {
+        if(this != &mi)
+        {
+            Masina::operator=(mi);
+            this->nr_persoane = mi.nr_persoane;
+            this->arma = mi.arma;
+        }
+
+        return *this;
+    }
+
+    void Getter_Info()
+    {
+        Masina::Getter_Info();
+
+        cout<<"Numarul de persoane care incap in masina este: "<<this->nr_persoane<<"."<<endl;
+
+        if(this->arma == 0)
+            cout<<"Masina nu este echipata cu arma."<<endl;
+        else
+            cout<<"Masina este echipata cu arma."<<endl;
+
+    }
+
+    ~MasiniInterventie()
+    {
+
+    };
+};
+
+class MasiniEmisieRecepttie: public Masina
+{
+    float distanta_semnal_acustic;
+    float distanta_semnal_video;
+
+public:
+
+    MasiniEmisieRecepttie(): Masina()
+    {
+        this->distanta_semnal_acustic = 0;
+        this->distanta_semnal_video = 0;
+    }
+
+    MasiniEmisieRecepttie(string model, string marca, string utilizare, float distanta_semnal_acustic, float distanta_semnal_video): Masina(model, marca, utilizare)
+    {
+        this->distanta_semnal_acustic = distanta_semnal_acustic;
+        this->distanta_semnal_video = distanta_semnal_video;
+    }
+
+    MasiniEmisieRecepttie& operator=(const MasiniEmisieRecepttie& mer)
+    {
+        if(this != &mer)
+        {
+            Masina::operator=(mer);
+            this->distanta_semnal_acustic = mer.distanta_semnal_acustic;
+            this->distanta_semnal_video = mer.distanta_semnal_video;
+        }
+
+        return *this;
+    }
+
+    void Getter_Info()
+    {
+        Masina::Getter_Info();
+
+        cout<<"Distanta de interceptie a semnalului acustic este de "<<this->distanta_semnal_acustic<<"."<<endl;
+        cout<<"Distanta de interceptie a semnalului video este de "<<this->distanta_semnal_video<<"."<<endl;
+    }
+
+    ~MasiniEmisieRecepttie()
+    {
+
+    };
+
+};
+
+class ListaAutomobile
+{
+public:
+    Masina* lista_masini[100];
+    int index = 0;
+
+    ListaAutomobile& operator+(Masina& m)
+    {
+        lista_masini[index] = &m;
+        index++;
+        return *this;
+    }
+
+    ListaAutomobile& operator+(MasiniUndercover& mu)
+    {
+        lista_masini[index] = &mu;
+        index++;
+        return *this;
+    }
+
+    ListaAutomobile& operator+(MasiniInterventie& mi)
+    {
+        lista_masini[index] = &mi;
+        index++;
+        return *this;
+    }
+
+    ListaAutomobile& operator+(MasiniEmisieRecepttie& mer)
+    {
+        lista_masini[index] = &mer;
+        index++;
+        return *this;
+    }
+
+    int Get_index()
+    {
+        return this->index;
+    }
+
+
+};
+
+int main()
+{
+    ListaAutomobile lista;
+    Masina m("Ford", "ceva", "habar nu am");
+    lista = lista + m;
+
+    MasiniUndercover m1("BMW", "400", "undercover", 10, 10);
+    lista = lista + m1;
+
+    MasiniInterventie m2("Altceva", "nu stiu", "pentru ceva", 6, 1);
+    lista = lista + m2;
+
+    MasiniEmisieRecepttie m3("Cumva", "aceasta", "nu se stie", 45.5, 67.8);
+    lista = lista + m3;
+
+    int k = lista.Get_index();
+    for(int i = 0; i < k; i++)
+    {
+        cout<<"\n";
+        lista.lista_masini[i]->Getter_Info();
+    }
+
+
+    return 0;
+}

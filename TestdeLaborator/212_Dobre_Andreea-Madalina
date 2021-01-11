@@ -1,1 +1,559 @@
-/
+/* Dobre Andreea- Madalina, grupa 212
+GNU GCC Compiler
+Eduard Gabriel Szmeteanca*/
+
+
+///sintaxa pentru supraincarcarea operatorilor este preluata din laboratoare
+
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <list>
+#include <fstream>
+
+using namespace std;
+
+class Vaccin
+{
+private:
+    float pret, temperatura;
+    string listaIngregiente, numeProducator;
+
+public:
+
+    Vaccin() ///constructor fara parametrii
+    {
+        numeProducator = "Necunoscut";
+        pret = 0;
+        temperatura  = 0;
+        listaIngregiente = "Necunoscut";
+    }
+
+    void CitireVaccin() ///functie folosita pentru citirea de la tastatura a vaccinelor
+    {
+        cin.ignore(100, '\n');
+        cout<<"\nIntroduceti numele producatorului: ";
+        getline(cin, numeProducator);
+        cout<<"\nIntroduceti pretul vaccinului: ";
+        cin>>pret;
+        cout<<"\nIntroduceti temperatura de depozitare: ";
+        cin>>temperatura;
+        cin.ignore(100, '\n');
+        cout<<"\nIntroduceti ingredientele: ";
+        getline(cin, listaIngregiente);
+    }
+
+    friend ostream& operator<<(ostream& out, const Vaccin v)
+    {
+        out<<"\nNume producator: "<<v.numeProducator;
+        out<<"\nPretul vaccinului este: "<<v.pret<<". Temperatura de depozitare este: "<<v.temperatura<<endl;
+        out<<"\nLista de ingrediente: "<<v.listaIngregiente<<endl;
+
+        return out;
+    }
+
+    friend istream& operator>>(istream& in, Vaccin v)
+    {
+        cout<<"\nIntroduceti numele producatorului: ";
+        getline(in, v.numeProducator);
+        cout<<"\nIntroduceti pretul vaccinului: ";
+        in>>v.pret;
+        cout<<"\nIntroduceti temperatura de depozitare: ";
+        in>>v.temperatura;
+        in.ignore(100, '\n');
+        cout<<"\nIntroduceti ingredientele: ";
+        getline(in, v.listaIngregiente);
+
+        return in;
+    }
+
+    string GetNume() const ///getter pentru numele producatorului
+    {
+        return numeProducator;
+    }
+
+    virtual void GetInfo() const ///functie folosita pentru afisarea listei de vaccinuri
+    {
+        cout<<"\nNumele producatorului: "<<numeProducator<<endl;
+        cout<<"\nPretul vaccinului este: "<<pret<<". Temperatura de depozitare este: "<<temperatura<<endl;
+        cout<<"\nLista de ingrediente: "<<listaIngregiente<<endl;
+    }
+
+    ~Vaccin() ///destructor
+    {
+
+    }
+};
+
+class VaccinAntigripal: public Vaccin
+{
+private:
+    string tipVirus;
+    bool respectaRecomandari;
+
+public:
+
+    VaccinAntigripal(): Vaccin()
+    {
+        tipVirus = "Necunoscut";
+        respectaRecomandari = 0;
+    }
+
+    void CitireVaccin()
+    {
+        Vaccin::CitireVaccin();
+        cout<<"\nIntroduceti tipul virusului: ";
+        getline(cin, tipVirus);
+        cout<<"\nIntroduceti '1' daca vaccinul respecta recomandarile sau '0' daca nu: ";
+        cin>>respectaRecomandari;
+    }
+
+    friend istream& operator >>(istream& in, VaccinAntigripal& va)
+    {
+        in>>(Vaccin&)va;
+        cout<<"\nIntroduceti tipul virusului: ";
+        getline(in, va.tipVirus);
+        cout<<"\nIntroduceti '1' daca vaccinul respecta recomandarile sau '0' daca nu: ";
+        in>>va.respectaRecomandari;
+        in.ignore(100, '\n');
+        return in;
+    }
+
+    friend ostream& operator<<(ostream& out, const VaccinAntigripal& va)
+    {
+        out<<(Vaccin&)va;
+        out<<"\nTipul virusului este: "<<va.tipVirus<<endl;
+
+        if(va.respectaRecomandari == 0)
+            out<<"\nVaccinul nu respecta recomandarile."<<endl;
+        else
+            out<<"\nVaccinul respecta recomandarile."<<endl;
+
+        return out;
+    }
+
+    void GetInfo() const
+    {
+        Vaccin::GetInfo();
+        cout<<"\nTipul virusului este: "<<tipVirus<<endl;
+
+        if(respectaRecomandari == 0)
+            cout<<"\nVaccinul nu respecta recomandarile."<<endl;
+        else
+            cout<<"\nVaccinul respecta recomandarile."<<endl;
+    }
+
+    ~VaccinAntigripal()
+    {
+
+    }
+};
+
+class VaccinAntihepatic: public Vaccin
+{
+private:
+    string tipHepatita, modAdministrare;
+
+public:
+
+    VaccinAntihepatic(): Vaccin()
+    {
+        tipHepatita = "Necunoscut";
+        modAdministrare = "Necunoscut";
+    }
+
+    void CitireVaccin()
+    {
+        Vaccin::CitireVaccin();
+        cin.ignore(100, '\n');
+        cout<<"\nIntroduceti tipul de hepatita: ";
+        getline(cin, tipHepatita);
+        cout<<"\nIntroduceti modul de administrare: ";
+        cin>>modAdministrare;
+    }
+
+    friend istream& operator >>(istream& in, VaccinAntihepatic& va)
+    {
+        in>>(Vaccin&)va;
+        cout<<"\nIntroduceti tipul hepatitei: ";
+        getline(in, va.tipHepatita);
+        cout<<"\nIntroduceti modul de administrare: ";
+        in>>va.modAdministrare;
+        in.ignore(100, '\n');
+
+        return in;
+    }
+
+
+    friend ostream& operator<<(ostream& out, const VaccinAntihepatic& vh)
+    {
+        out<<(Vaccin&)vh;
+        out<<"\nTipul hepatitei este: "<<vh.tipHepatita<<", iar modul de administrare este: "<<vh.modAdministrare<<endl;
+
+        return out;
+    }
+
+    void GetInfo() const
+    {
+        cout<<"\nTipul de hepatita este: "<<tipHepatita<<", iar modul de administrare este: "<<modAdministrare<<endl;
+    }
+
+    ~VaccinAntihepatic()
+    {
+
+    }
+};
+
+class VaccinAntiSarsCov2: public Vaccin
+{
+private:
+    string reactiiAdverse;
+    float rataEficienta;
+    string medicamenteContrainidicate;
+
+public:
+
+    VaccinAntiSarsCov2(): Vaccin()
+    {
+        reactiiAdverse = "Necunoscut";
+        rataEficienta = 0;
+        medicamenteContrainidicate = "Necunoscut";
+    }
+
+    void CitireVaccin()
+    {
+        Vaccin::CitireVaccin();
+        cin.ignore(100, '\n');
+        cout<<"\nIntroduceti reactiile adverse: ";
+        getline(cin, reactiiAdverse);
+        cout<<"\nIntroduceti rata de eficienta: ";
+        cin>>rataEficienta;
+        cout<<"\nIntroduceti medicamentele contraindicate: ";
+        getline(cin, medicamenteContrainidicate);
+        cin.ignore(100, '\n');
+    }
+
+    friend istream& operator >>(istream& in, VaccinAntiSarsCov2& va)
+    {
+        in>>(Vaccin&)va;
+        cout<<"\nIntroduceti reactiile adverse: ";
+        getline(in, va.reactiiAdverse);
+        cout<<"\nIntroduceti rata de eficienta: ";
+        in>>va.rataEficienta;
+        in.ignore(100, '\n');
+        cout<<"\nIntroduceti medicamentele contraindicate: ";
+        getline(in, va.medicamenteContrainidicate);
+        cout<<endl;
+        return in;
+    }
+
+
+    friend ostream& operator<<(ostream& out, const VaccinAntiSarsCov2& vh)
+    {
+        out<<(Vaccin&)vh;
+        out<<"\nRata de eficienta: "<<vh.rataEficienta<<". Medicamente contraindicate: "<<vh.medicamenteContrainidicate<<endl;
+        out<<"\nReactii adverse: "<<vh.reactiiAdverse<<endl;
+
+        return out;
+    }
+
+    void GetInfo()
+    {
+        cout<<"\nRata de eficienta: "<<rataEficienta<<". Medicamente contraindicate: "<<medicamenteContrainidicate<<endl;
+        cout<<"\nReactii adverse: "<<reactiiAdverse<<endl;
+    }
+
+    ~VaccinAntiSarsCov2()
+    {
+
+    }
+
+};
+
+class ListaVaccin
+{
+private:
+    list<Vaccin> listaVaccin;
+    int index;
+
+public:
+    void AdaugareVaccin(Vaccin& v) ///adauga vaccinuri in lista
+    {
+        listaVaccin.push_back(v);
+        index++;
+    }
+    void AdaugareVaccin(VaccinAntigripal& va)
+    {
+        listaVaccin.push_back(va);
+        index++;
+    }
+
+    void AdaugareVaccin(VaccinAntihepatic& vh)
+    {
+        listaVaccin.push_back(vh);
+        index++;
+    }
+
+    void AdaugareVaccin(VaccinAntiSarsCov2& vcs)
+    {
+        listaVaccin.push_back(vcs);
+        index++;
+    }
+
+    void Afisare() ///afiseaza lista de vaccinuri(functie preluata din proiectul propriu)
+    {
+        for(auto const& i: listaVaccin)
+        {
+            (&i)->GetInfo();
+            cout<<endl;
+        }
+    }
+
+    void AfisareProducatori() ///afiseaza numele producatorilor
+    {
+        for(auto const& i: listaVaccin)
+        {
+            cout<<(&i)->GetNume();
+            cout<<endl;
+        }
+    }
+
+    ~ListaVaccin() {}
+
+};
+
+class Comanda
+{
+private:
+    string id, data, numeClient, vaccinuriComandate;
+    int cantitate1, cantitate2, cantitate3;
+
+public:
+    Comanda()
+    {
+        id = "Necunoscut";
+        data = "Necunoscut";
+        numeClient = "Necunoscut";
+        vaccinuriComandate = "Necunoscut";
+        cantitate1 = 0;
+        cantitate2 = 0;
+        cantitate3 = 0;
+    }
+
+    Comanda(string data, string client, string tipvaccin, int cantitate)
+    {
+        this->data = data;
+        this->numeClient = client;
+        this->vaccinuriComandate = tipvaccin;
+        this->cantitate1 = cantitate;
+    }
+
+    void CitireComanda()
+    {
+        cin.ignore(10, '\n');
+        cout<<"\nIntroduceti numele: ";
+        getline(cin, numeClient);
+        cout<<"\nIntroduceti data: ";
+        getline(cin, data);
+        cout<<"\nIntroduceti id-ul comenzii: ";
+        cin>>id;
+        cin.ignore(100, '\n');
+        cout<<"\nIntroduceti vaccinurile pe care doriti sa le comandati: ";
+        getline(cin, vaccinuriComandate);
+        cout<<"\nIntroduceti cantitatea(in ordine: vaccin antigripal, vaccin antihepatic, vaccin antisarscov2): ";
+        cin>>cantitate1>>cantitate2>>cantitate3;
+    }
+
+    string GetClient() const
+    {
+        return numeClient;
+    }
+
+    string GetData() const
+    {
+        return data;
+    }
+
+    string GetVaccin() const
+    {
+        return vaccinuriComandate;
+    }
+
+    void GetComanda() const
+    {
+        cout<<"\nNume client: "<<numeClient;
+        cout<<"\nId comanda: "<<id;
+        cout<<"\nData comanda: "<<data;
+        cout<<"\nVaccinuri comandate: "<<vaccinuriComandate;
+        cout<<"\nCantitate vaccinuri antigripale: "<<cantitate1<<", vaccinuri antihepatice "<<cantitate2<<", vaccinuri antisarscov2 "<<cantitate3;
+        cout<<endl;
+    }
+
+    ~Comanda() {}
+};
+
+class ListaComenzi
+{
+private:
+    list<Comanda> listaComenzi;
+    int index;
+
+public:
+    void AdaugareComanda(Comanda& com)
+    {
+        listaComenzi.push_back(com);
+        index++;
+    }
+
+    void AfisareComenzi()
+    {
+        for(auto const& i: listaComenzi)
+        {
+            (&i)->GetComanda();
+            cout<<endl;
+        }
+    }
+
+    void Afisare_lista_fisier() ///functie preluata din roiectul propriu
+    {
+        ofstream file;
+        file.open("FisierVaccin.txt");
+        int j = 1;
+        for(auto const& i: listaComenzi)
+        {
+            file<<"Client: "<<(&i)->GetClient()<<" Data: "<<(&i)->GetData()<< "Vaccinuri: "<<(&i)->GetVaccin();
+            j++;
+            file<<endl;
+        }
+
+        file.close();
+    }
+
+    ListaComenzi operator+(Comanda& c)
+    {
+        listaComenzi.push_back(c);
+        index++;
+
+        return *this;
+    }
+
+    ~ListaComenzi() {}
+
+};
+
+void Meniu()
+{
+    cout<<"0 - Revenire la meniu ";
+    cout<<"\n1 - Adaugare vaccin ";
+    cout<<"\n2 - Afisare lista vaccinuri";
+    cout<<"\n3 - Afiseaza numele tuturor producatorilor ";
+    cout<<"\n4 - Intoduceti comanda ";
+    cout<<"\n5 - Afisare comenzi ";
+    cout<<"\n6 - Scrierea comenzilor in fisier ";
+    cout<<"\n7 - Oprire program ";
+    cout<<"\n";
+}
+
+int main()
+{
+    Meniu();
+    string introdus = "Vaccinul a fost introdus.";
+    string finish = "\nApasati '0' pentru a reveni la meniul principal sau continuati cu alta comanda.";
+    int optiune;
+    string tipvaccin;
+    ListaVaccin lista;
+    ListaComenzi lista_comenzi;
+
+    /*VaccinAntigripal a;
+    VaccinAntihepatic b;
+    VaccinAntiSarsCov2 c;
+    cin>>a>>b>>c;
+    cout<<a<<b<<c;*/
+
+    /*Comanda com1("20-12-2020", "SpitalX", "AntiSarsCov2",20);
+    lista_comenzi = lista_comenzi + com1;
+    lista_comenzi.AfisareComenzi();*/
+
+    while(optiune != 7)
+    {
+        cout<<"Introduceti optiunea: ";
+        cin>>optiune;
+        try
+        {
+            if(cin.fail() || optiune > 7 || optiune < 0)
+                throw optiune;
+
+            if(optiune == 0)
+                Meniu();
+
+            if(optiune == 1)
+            {
+                cout<<"\nIntroduceti tipul vaccinului(antihepatic, antisarscov2, antigripal): "<<endl;
+                cin>>tipvaccin;
+
+                if(tipvaccin == "antihepatic")
+                {
+                    VaccinAntihepatic vh;
+                    vh.CitireVaccin();
+                    lista.AdaugareVaccin(vh);
+                    cout<<introdus<<finish<<endl;
+
+                }
+                else if(tipvaccin == "antisarscov2")
+                {
+                    VaccinAntiSarsCov2 vsc;
+                    vsc.CitireVaccin();
+                    lista.AdaugareVaccin(vsc);
+                    cout<<introdus<<finish<<endl;
+                }
+                else if(tipvaccin == "antigripal")
+                {
+                    VaccinAntigripal va;
+                    va.CitireVaccin();
+                    lista.AdaugareVaccin(va);
+                    cout<<introdus<<finish<<endl;
+                }
+
+            }
+
+            if(optiune == 2)
+            {
+                lista.Afisare();
+            }
+
+            if(optiune == 3)
+            {
+                lista.AfisareProducatori();
+            }
+
+            if(optiune == 4)
+            {
+                Comanda c;
+                c.CitireComanda();
+                lista_comenzi.AdaugareComanda(c);
+                cout<<"\nComanda a fost adaugata."<<endl<<finish;
+            }
+
+            if(optiune == 5)
+            {
+                lista_comenzi.AfisareComenzi();
+            }
+
+            if(optiune == 6)
+            {
+                lista_comenzi.Afisare_lista_fisier();
+                cout<<"Lista dumneavoastra a fost scrisa in fisier."<<endl;
+                cout<<"Apasati 0 pentru a reveni la meniul principal sau continuati cu o alta comanda."<<endl;
+            }
+        }
+        catch(int)
+        {
+            cout<<"Optiune introdusa nu este un numar valid."<<endl;
+            cin.clear();
+            cin.ignore(500, '\n');
+        }
+    }
+
+    return 0;
+}
+
